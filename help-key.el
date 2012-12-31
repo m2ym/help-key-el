@@ -60,19 +60,20 @@ is a keymap."
 
 (defun help-key-describe (prefix)
   (setq help-key-described-p t)
-  (let* ((buffer (help-key-buffer))
+  (let* ((buffer (current-buffer))
          (prefix-desc (key-description prefix))
          (prefix-re (concat "^" (regexp-quote prefix-desc) " ")))
-    (with-current-buffer buffer
+    (with-current-buffer (help-key-buffer)
       (erase-buffer)
-      (save-excursion
-        (describe-buffer-bindings buffer prefix)
-        (goto-char (point-min))
-        (search-forward "\n\n")
-        (delete-region (point-min) (point))
-        (while (re-search-forward prefix-re nil t)
-          (replace-match "" nil nil))))
-    (display-buffer buffer)))
+      (describe-buffer-bindings buffer prefix)
+      (let ((point (point-min)))
+        (goto-char point)
+        (save-excursion
+          (while (re-search-forward prefix-re nil t)
+            (delete-region point (point))
+            (forward-line 1)
+            (setq point (point))))))
+    (display-buffer (help-key-buffer))))
 
 (defun help-key-finish ()
   (setq help-key-keys keys
