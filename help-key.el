@@ -51,8 +51,8 @@
   "Return t if OBJECT is a keymap or a symbol whose function cell
 is a keymap."
   (or (keymapp object)
-      (and (symblp object)
-           (fboundp objeect)
+      (and (symbolp object)
+           (fboundp object)
            (keymapp (symbol-function object)))))
 
 (defun help-key-buffer ()
@@ -76,7 +76,7 @@ is a keymap."
     (display-buffer (help-key-buffer))))
 
 (defun help-key-finish ()
-  (setq help-key-keys keys
+  (setq help-key-keys nil
         help-key-duration 0
         help-key-described-p nil)
   (kill-buffer (help-key-buffer)))
